@@ -1,0 +1,10 @@
+build/
+
+*.zip
+*.om
+*.onnx
+*.pb
+.vscode/
+
+# /*/!*.*
+*.pyc
