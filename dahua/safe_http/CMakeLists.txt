@@ -17,9 +17,11 @@ cmake_minimum_required(VERSION 3.10)
 file(GLOB_RECURSE SOURCES *.cpp *.cc *.c)
 
 
-find_package(CPPRESTSDK)
+# find_package(CPPRESTSDK)
+find_library(cpprestsdk REQUIRED NAMES cpprestsdk cpprest)
 
-if (NOT CPPRESTSDK_FOUND) 
+# if (NOT CPPRESTSDK_FOUND) 
+if (NOT cpprestsdk-lib) 
     message(STATUS, "not build safe http")
     return()
 endif()
@@ -28,15 +30,11 @@ set(INCLUDE ${CMAKE_CURRENT_LIST_DIR})
 
 include_directories(${CMAKE_CURRENT_LIST_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-include_directories(${LIBMODELBOX_CONFIG_INCLUDE})
-include_directories(${LIBMODELBOX_BASE_INCLUDE})
-include_directories(${LIBMODELBOX_INCLUDE})
 include_directories(${INCLUDE})
-include_directories(${HUAWEI_SECURE_C_INCLUDE_DIR})
 
 set(LIBRARY cube-common-safe-http-object)
 add_library(${LIBRARY} STATIC ${SOURCES})
 set_property(TARGET ${LIBRARY} PROPERTY POSITION_INDEPENDENT_CODE ON)
 
-set(MODELBOX_COMMON_SAFE_HTTP_LIBRARY ${LIBRARY} CACHE INTERNAL "")
-set(MODELBOX_COMMON_SAFE_HTTP_INCLUDE ${INCLUDE} CACHE INTERNAL "")
+set(CUBE_COMMON_SAFE_HTTP_LIBRARY ${LIBRARY} CACHE INTERNAL "")
+set(CUBE_COMMON_SAFE_HTTP_INCLUDE ${INCLUDE} CACHE INTERNAL "")
