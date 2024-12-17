@@ -1,24 +1,33 @@
 #include "ServerWrapper.h"
 ServerWrapper::ServerWrapper(const std::string &uri) : listener(uri)
 {
-    listener.support(methods::GET, std::bind(&ServerWrapper::handle_request, this, std::placeholders::_1, methods::GET));
-    listener.support(methods::POST, std::bind(&ServerWrapper::handle_request, this, std::placeholders::_1, methods::POST));
-    listener.support(methods::DEL, std::bind(&ServerWrapper::handle_request, this, std::placeholders::_1, methods::DEL));
+    listener.support(methods::GET,
+                     std::bind(&ServerWrapper::handle_request, this,
+                               std::placeholders::_1, methods::GET));
+    listener.support(methods::POST,
+                     std::bind(&ServerWrapper::handle_request, this,
+                               std::placeholders::_1, methods::POST));
+    listener.support(methods::DEL,
+                     std::bind(&ServerWrapper::handle_request, this,
+                               std::placeholders::_1, methods::DEL));
 }
 
 // 添加 GET 方法的路由处理器
-void ServerWrapper::add_get_route(const std::string &path, const std::function<void(http_request)> &handler)
+void ServerWrapper::add_get_route(
+    const std::string &path, const std::function<void(http_request)> &handler)
 {
     get_routes[path] = handler;
 }
 
 // 添加 POST 方法的路由处理器
-void ServerWrapper::add_post_route(const std::string &path, const std::function<void(http_request)> &handler)
+void ServerWrapper::add_post_route(
+    const std::string &path, const std::function<void(http_request)> &handler)
 {
     post_routes[path] = handler;
 }
 
-void ServerWrapper::add_delete_route(const std::string &path, const std::function<void(http_request)> &handler)
+void ServerWrapper::add_delete_route(
+    const std::string &path, const std::function<void(http_request)> &handler)
 {
     delete_routes[path] = handler;
 }
@@ -35,20 +44,27 @@ void ServerWrapper::stop()
     Logger::log("Server stopped.");
 }
 
-void ServerWrapper::default_not_found_handler(http_request request) {
+void ServerWrapper::default_not_found_handler(http_request request)
+{
     json::value response;
     response["error"] = json::value::string("Path not found");
     request.reply(status_codes::NotFound, response);
 }
 
-void ServerWrapper::handle_request(http_request request, const method& httpMethod) {
-    try {
+void ServerWrapper::handle_request(http_request request,
+                                   const method &httpMethod)
+{
+    try
+    {
         const auto path = request.relative_uri().path();
-        const auto& route_map = get_route_map(httpMethod);
+        const auto &route_map = get_route_map(httpMethod);
 
-        if (route_map.count(path)) {
+        if (route_map.count(path))
+        {
             route_map.at(path)(request);
-        } else {
+        }
+        else
+        {
             // 动态路由匹配逻辑
             if (httpMethod == methods::DEL)
             {
@@ -64,28 +80,44 @@ void ServerWrapper::handle_request(http_request request, const method& httpMetho
                 default_not_found_handler(request);
             }
         }
-    } catch (const std::exception& e) {
+    }
+    catch (const std::exception &e)
+    {
         handle_exception(request, e.what());
-    } catch (...) {
+    }
+    catch (...)
+    {
         handle_exception(request, "Unknown error occurred");
     }
 }
 
-void ServerWrapper::handle_exception(http_request request, const std::string& errorMessage) {
-    std::cerr << "[Server Error] " << errorMessage << " request: " << request.body() << std::endl;
+void ServerWrapper::handle_exception(http_request request,
+                                     const std::string &errorMessage)
+{
+    std::cerr << "[Server Error] " << errorMessage
+              << " request: " << request.body() << std::endl;
     json::value response;
     response["error"] = json::value::string(errorMessage);
     request.reply(status_codes::InternalError, response);
 }
 
-const std::map<std::string, std::function<void(http_request)>>& ServerWrapper::get_route_map(const method& httpMethod) {
-    if (httpMethod == methods::GET) {
+const std::map<std::string, std::function<void(http_request)>> &
+ServerWrapper::get_route_map(const method &httpMethod)
+{
+    if (httpMethod == methods::GET)
+    {
         return get_routes;
-    } else if (httpMethod == methods::POST) {
+    }
+    else if (httpMethod == methods::POST)
+    {
         return post_routes;
-    } else if (httpMethod == methods::DEL) {
+    }
+    else if (httpMethod == methods::DEL)
+    {
         return delete_routes;
-    } else {
+    }
+    else
+    {
         throw std::invalid_argument("Unsupported HTTP method");
     }
 }

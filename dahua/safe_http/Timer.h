@@ -13,7 +13,7 @@ public:
     Timer() : is_running(false) {}
     Timer(std::function<void()> task, std::chrono::milliseconds interval);
 
-    ~Timer(); 
+    ~Timer();
 
     // 启动定时器
     void start(std::function<void()> task, std::chrono::milliseconds interval);

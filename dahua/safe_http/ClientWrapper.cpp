@@ -3,8 +3,7 @@
 // 请求方法
 void ClientWrapper::request(
     const method& httpMethod, const std::string& path, const json::value& body,
-    void* customInfo,
-    std::string content_type,
+    void* customInfo, std::string content_type,
     const std::function<void(json::value, void*)>& onSuccess,
     const std::function<void(const std::string&)>& onError)
 {
@@ -52,27 +51,37 @@ void ClientWrapper::request(
 }
 
 // GET 请求封装
-void ClientWrapper::get(const std::string& path,
-                        void* customInfo,
-                        const std::function<void(json::value, void*)>& onSuccess,
-                        const std::function<void(const std::string&)>& onError)
+void ClientWrapper::get(
+    const std::string& path, void* customInfo,
+    const std::function<void(json::value, void*)>& onSuccess,
+    const std::function<void(const std::string&)>& onError)
 {
-    try{
-        request(methods::GET, path, json::value::null(), customInfo, "text/plain; charset=utf-8", onSuccess, onError);
-    } catch (const std::exception& e) {
-        std::cerr << "Client Error: " << e.what() << " at uri: " << path << std::endl;
+    try
+    {
+        request(methods::GET, path, json::value::null(), customInfo,
+                "text/plain; charset=utf-8", onSuccess, onError);
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "Client Error: " << e.what() << " at uri: " << path
+                  << std::endl;
     }
 }
 
-void ClientWrapper::post(const std::string& path, const json::value& body,
-                        void* customInfo,
-                         const std::function<void(json::value,void*)>& onSuccess,
-                         const std::function<void(const std::string&)>& onError)
+void ClientWrapper::post(
+    const std::string& path, const json::value& body, void* customInfo,
+    const std::function<void(json::value, void*)>& onSuccess,
+    const std::function<void(const std::string&)>& onError)
 {
-    try{
-        request(methods::POST, path, body, customInfo, "application/json; charset=utf-8", onSuccess, onError);
-    } catch (const std::exception& e) {
-        std::cerr << "Client Error: " << e.what() << " at uri: " << path << " body: " << body.serialize() << std::endl;
+    try
+    {
+        request(methods::POST, path, body, customInfo,
+                "application/json; charset=utf-8", onSuccess, onError);
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "Client Error: " << e.what() << " at uri: " << path
+                  << " body: " << body.serialize() << std::endl;
     }
 }
 
