@@ -149,3 +149,37 @@ void ClientFCG::getConfigFile()
     getConfigFileTimer.start(getConfigFileTask,
                              std::chrono::milliseconds(timerInterval * 1000));
 }
+
+std::string ClientFCG::uploadImg(std::string& uuid, std::string& uid, std::string& base64)
+{
+    std::cout << "uploadImg Task executed" << std::endl;
+    json::value bodyInfo;
+
+    // {
+    // "fileName": "12345678",
+    // "image": "base64",
+    // "type": "capture",
+    // "uid": "1",
+    // "fileType": "alarm"
+    // }
+
+    bodyInfo["fileName"] = json::value::string(uuid);
+    bodyInfo["image"] = json::value::string(base64);
+    bodyInfo["type"] = json::value::string("capture");
+    bodyInfo["uid"] = json::value::string(uid);
+    bodyInfo["fileType"] = json::value::string("alarm");
+    
+    std::string imageUrl;
+    post(SAVE_IMG_URI, bodyInfo, nullptr,
+            [&](json::value response, void* customInfo) {
+                std::cout << "[SAVE_IMG_URI] Response: "
+                        << response.serialize() << std::endl;
+                if (!response.has_field("data")) return;
+                imageUrl = response["data"]["imageUrl"].as_string();
+            });
+
+    // {
+    //     "code" : "0", "message" : "success", "data": { "imageUrl" : "xxxxxxx" }
+    // }
+    return imageUrl;
+}

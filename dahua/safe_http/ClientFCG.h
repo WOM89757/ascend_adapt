@@ -15,7 +15,7 @@ public:
     void reportStatus();
     void updateNodeInfo(std::vector<ServiceNode>& ServiceNodes);
     void getConfigFile();
-    void uploadImg();
+    std::string uploadImg(std::string& uuid, std::string& uid, std::string& base64);
 
     // private:
     // 1. 服务上报

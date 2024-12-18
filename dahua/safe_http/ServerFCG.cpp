@@ -75,6 +75,7 @@ void ServerFCG::handlePostFaceExtract(http_request request, void* customInfo)
             json::value response;
             response["code"] = json::value::string("-1");
             response["message"] = json::value::string("接口未实现");
+
             // Test for GET_NODE_INFO
             response["data"][0]["serviceName"] =
                 json::value::string("CVEngine-Feature");
@@ -82,6 +83,8 @@ void ServerFCG::handlePostFaceExtract(http_request request, void* customInfo)
                 json::value::string("10.31.17.222");
             response["data"][0]["serviceNodes"][0]["port"] =
                 json::value::string("4444");
+            // // Test for SAVE_IMG_URI
+            // response["data"]["imageUrl"] = json::value::string("/efs_1ur8/12ha.jpg");
             request.reply(status_codes::OK, response);
         })
         .wait();
@@ -130,7 +133,7 @@ void ServerFCG::handlePostBehaviorTask(http_request request, void* customInfo)
             // std::cout << algorithms.size() << std::endl;
 
             // TODO 解析算法字段 启动对应算法 若启动失败则返回对应字段
-            Task task(taskId, channelId, userChannelCode, url, saasExtParam, uid, 3);
+            std::unique_ptr<Task> task =  std::make_unique<Task>(viasAddr_ ,taskId, channelId, userChannelCode, url, saasExtParam, uid, 3);
             if (!addTask(task))
             {
                 response["code"] = json::value::string("-1");
@@ -156,17 +159,18 @@ void ServerFCG::handleDelBehaviorTask(http_request request, void* customInfo)
         segments[1] == "Behavior" && segments[2] == "Task")
     {
         std::string taskId = segments[3];
-        Logger::log("Deleting task with ID: " + taskId);
-        // TODO 删除逻辑
+        // 删除逻辑
         if (delTask(taskId))
         {
             response["code"] = json::value::string("0");
             response["message"] = json::value::string("success");
+            Logger::log("Deleting task with ID: " + taskId);
         }
         else
         {
             response["code"] = json::value::string("-1");
             response["message"] = json::value::string("del task faild");
+            Logger::log("Deleting task with ID: " + taskId + " Faild!");
         }
     }
     else
@@ -184,16 +188,16 @@ void ServerFCG::handleGetBehaviorTask(http_request request, void* customInfo)
     request.reply(status_codes::OK, response);
 }
 
-bool ServerFCG::addTask(Task& task)
+bool ServerFCG::addTask(std::unique_ptr<Task>& task)
 {
-    auto iter = taskManagerMap.find(task.taskId_);
+    auto iter = taskManagerMap.find(task->taskId_);
     if (iter != taskManagerMap.end())
     {
         return false;
     }
     //TODO start task
-    task.start();
-    taskManagerMap[task.taskId_] = task;
+    task->start();
+    taskManagerMap[task->taskId_] = std::move(task);
     std::cout << "taskMap size: " << taskManagerMap.size() << std::endl;
     return true;
 }
@@ -216,16 +220,16 @@ json::value ServerFCG::getTaskList()
     response["message"] = json::value::string("success");
     // 根据算法任务运行情况，构造算法任务列表
     int i = 0;
-    for(auto iter : taskManagerMap)
+    for(const auto& iter : taskManagerMap)
     {
-        auto taskTmp = iter.second;
+        auto& taskTmp = iter.second;
 
         json::value task;
-        task["taskId"] = json::value::string(taskTmp.taskId_);
-        task["channelId"] = json::value::string(taskTmp.channelId_);
-        task["state"] = taskTmp.state_;
-        task["code"] = json::value::string(taskTmp.code_);
-        task["message"] = json::value::string(taskTmp.message_);
+        task["taskId"] = json::value::string(taskTmp->taskId_);
+        task["channelId"] = json::value::string(taskTmp->channelId_);
+        task["state"] = taskTmp->state_;
+        task["code"] = json::value::string(taskTmp->code_);
+        task["message"] = json::value::string(taskTmp->message_);
         response["data"][i] = task;
         i++;
     }
@@ -238,7 +242,7 @@ bool ServerFCG::delTask(std::string& taskId)
     {
         return false;
     }
-    taskManagerMap[taskId].stop();
+    taskManagerMap[taskId]->stop();
     taskManagerMap.erase(taskId);
     return true;
 }

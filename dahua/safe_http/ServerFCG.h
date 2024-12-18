@@ -27,16 +27,15 @@ private:
     void handleDelBehaviorTask(http_request request, void* customInfo);
     // 查询行为智能任务
     void handleGetBehaviorTask(http_request request, void* customInfo);
-    bool addTask(Task& task);
+    bool addTask(std::unique_ptr<Task>& task);
     json::value getTaskList();
     bool delTask(std::string& taskId);
 
 
     std::string viasAddr_;
     std::shared_ptr<ClientFCG> client_;
-    std::vector<ServiceNode> serviceNodes_;
     CustomInfo taskManager;
-    std::map<std::string, Task> taskManagerMap;
+    std::map<std::string, std::unique_ptr<Task>> taskManagerMap;
 };
 
 #endif /* __SERVERFCG_H__ */

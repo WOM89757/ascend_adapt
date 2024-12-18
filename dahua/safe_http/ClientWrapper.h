@@ -12,7 +12,7 @@ using namespace web::http::client;
 class ClientWrapper
 {
 public:
-    explicit ClientWrapper(const std::string& uri) : client(uri) {}
+    explicit ClientWrapper(const std::string& uri) : uri_(uri), client(uri) {}
 
     // 请求方法
     void request(const method& httpMethod, const std::string& path,
@@ -43,7 +43,7 @@ public:
                                    void* customInfo = nullptr);
     // 默认错误回调函数
     static void default_on_error(const std::string& error);
-
+    std::string uri_;
 private:
     http_client client;
 };

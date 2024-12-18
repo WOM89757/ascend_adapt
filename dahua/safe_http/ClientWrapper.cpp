@@ -63,7 +63,7 @@ void ClientWrapper::get(
     }
     catch (const std::exception& e)
     {
-        std::cerr << "Client Error: " << e.what() << " at uri: " << path
+        std::cerr << "Client Error: " << e.what() << " at uri: " << uri_  << path
                   << std::endl;
     }
 }
@@ -80,7 +80,7 @@ void ClientWrapper::post(
     }
     catch (const std::exception& e)
     {
-        std::cerr << "Client Error: " << e.what() << " at uri: " << path
+        std::cerr << "Client Error: " << e.what() << " at uri: " << uri_ << path
                   << " body: " << body.serialize() << std::endl;
     }
 }
