@@ -28,6 +28,9 @@ private:
     // 查询行为智能任务
     void handleGetBehaviorTask(http_request request, void* customInfo);
     bool addTask(Task& task);
+    json::value getTaskList();
+    bool delTask(std::string& taskId);
+
 
     std::string viasAddr_;
     std::shared_ptr<ClientFCG> client_;

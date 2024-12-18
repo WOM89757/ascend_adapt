@@ -130,7 +130,7 @@ void ServerFCG::handlePostBehaviorTask(http_request request, void* customInfo)
             // std::cout << algorithms.size() << std::endl;
 
             // TODO 解析算法字段 启动对应算法 若启动失败则返回对应字段
-            Task task(taskId, channelId, userChannelCode, url, saasExtParam, uid, "3");
+            Task task(taskId, channelId, userChannelCode, url, saasExtParam, uid, 3);
             if (!addTask(task))
             {
                 response["code"] = json::value::string("-1");
@@ -158,8 +158,16 @@ void ServerFCG::handleDelBehaviorTask(http_request request, void* customInfo)
         std::string taskId = segments[3];
         Logger::log("Deleting task with ID: " + taskId);
         // TODO 删除逻辑
-        response["code"] = json::value::string("0");
-        response["message"] = json::value::string("success");
+        if (delTask(taskId))
+        {
+            response["code"] = json::value::string("0");
+            response["message"] = json::value::string("success");
+        }
+        else
+        {
+            response["code"] = json::value::string("-1");
+            response["message"] = json::value::string("del task faild");
+        }
     }
     else
     {
@@ -170,6 +178,27 @@ void ServerFCG::handleDelBehaviorTask(http_request request, void* customInfo)
 }
 
 void ServerFCG::handleGetBehaviorTask(http_request request, void* customInfo)
+{
+    json::value response = getTaskList();
+    std::cout << "handleGetBehaviorTask: " << response.serialize() << std::endl;
+    request.reply(status_codes::OK, response);
+}
+
+bool ServerFCG::addTask(Task& task)
+{
+    auto iter = taskManagerMap.find(task.taskId_);
+    if (iter != taskManagerMap.end())
+    {
+        return false;
+    }
+    //TODO start task
+    task.start();
+    taskManagerMap[task.taskId_] = task;
+    std::cout << "taskMap size: " << taskManagerMap.size() << std::endl;
+    return true;
+}
+
+json::value ServerFCG::getTaskList()
 {
     json::value response;
     //     {
@@ -185,30 +214,31 @@ void ServerFCG::handleGetBehaviorTask(http_request request, void* customInfo)
     // }
     response["code"] = json::value::string("0");
     response["message"] = json::value::string("success");
-    // TODO 根据算法任务运行情况，构造算法任务列表
-    json::value task;
-    task["taskId"] = json::value::string("1");
-    task["channelId"] = json::value::string("12321");
-    task["state"] = json::value::string("3");
-    task["code"] = json::value::string("authError");
-    task["message"] = json::value::string("auth timeout");
-    response["data"][0] = task;
-    response["data"][1] = task;
-    std::cout << "handleGetBehaviorTask: " << response.serialize() << std::endl;
+    // 根据算法任务运行情况，构造算法任务列表
+    int i = 0;
+    for(auto iter : taskManagerMap)
+    {
+        auto taskTmp = iter.second;
 
-    request.reply(status_codes::OK, response);
+        json::value task;
+        task["taskId"] = json::value::string(taskTmp.taskId_);
+        task["channelId"] = json::value::string(taskTmp.channelId_);
+        task["state"] = taskTmp.state_;
+        task["code"] = json::value::string(taskTmp.code_);
+        task["message"] = json::value::string(taskTmp.message_);
+        response["data"][i] = task;
+        i++;
+    }
+    return response;
 }
-
-bool ServerFCG::addTask(Task& task)
+bool ServerFCG::delTask(std::string& taskId)
 {
-    auto iter = taskManagerMap.find(task.taskId_);
-    if (iter != taskManagerMap.end())
+    auto iter = taskManagerMap.find(taskId);
+    if (iter == taskManagerMap.end())
     {
         return false;
     }
-    //TODO start task
-    
-    taskManagerMap[task.taskId_] = task;
-    std::cout << "taskMap size: " << taskManagerMap.size() << std::endl;
+    taskManagerMap[taskId].stop();
+    taskManagerMap.erase(taskId);
     return true;
 }
