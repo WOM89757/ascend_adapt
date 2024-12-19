@@ -3,6 +3,7 @@
 #include <csignal>
 
 #include "safe_http/ServerFCG.h"
+#include "safe_http/ServerDH.h"
 
 
 std::atomic<bool> keep_running(true);
@@ -23,12 +24,15 @@ int main()
     std::string port = "8080";
     std::string serverUri = ipAddress + ":" + port;
     std::string viasAddr = getenv("VIASAddr");
-    viasAddr = serverUri;
     // Server
     ServerFCG server("http://" + serverUri, viasAddr);
     server.init();
     server.start();
 
+    std::string serverUriDh = ipAddress + ":8081";
+    ServerDH serverDh("http://" + serverUriDh);
+    serverDh.init();
+    serverDh.start();
 
     while (keep_running.load())
     {

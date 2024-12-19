@@ -82,6 +82,10 @@ void ClientWrapper::post(
     {
         std::cerr << "Client Error: " << e.what() << " at uri: " << uri_ << path
                   << " body: " << body.serialize() << std::endl;
+        if (onError)
+        {
+            onError(e.what());
+        }
     }
 }
 

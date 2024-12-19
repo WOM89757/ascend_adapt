@@ -48,8 +48,6 @@ public:
     int state_;
     std::string code_;
     std::string message_;
-    std::vector<AlgInfo> algList;
-    std::queue<AlarmInfo> alarmQueue;
     AlarmFCG alarmFCG;
 
 private:

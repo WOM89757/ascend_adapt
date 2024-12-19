@@ -5,34 +5,6 @@ void AlarmFCG::start(std::string& viasAddr)
     viasAddr_ = viasAddr;
     clientVias = std::make_shared<ClientFCG>("http://" + viasAddr_);
     clientVias->updateNodeInfo(serviceNodes_);
-    if (serviceNodes_.empty())
-    {
-        std::cout << "Image Server Is Null" << std::endl;
-    }
-    else
-    {
-        for(auto tmp : serviceNodes_)
-        {
-           auto uri =  "http://" + tmp.getUri();
-            if (clientImgServer)
-            {
-                std::cout << "start image uri: "<< uri << std::endl;
-                clientImgServer = std::make_shared<ClientFCG>(uri);
-            }
-            // //TODO update logic
-            // else if(clientImgServer->uri_ != uri)
-            // {
-            //     clientImgServer.reset();
-            //     clientImgServer = std::make_shared<ClientFCG>(uri);
-            // }
-            // else
-            // {
-            //     break;
-            // }
-
-        }
-    }
-
     startThr();
 }
 
@@ -43,7 +15,8 @@ void AlarmFCG::stop()
 
 void AlarmFCG::run()
 {
-    while (isRunning())
+    // while (isRunning())
+    while (isRunning() || !dataQueue.empty())
     {
         std::cout << "Alarm Running in thread: " << std::this_thread::get_id() << " queue size: " << dataQueue.size() << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(2));
@@ -152,15 +125,42 @@ bool AlarmFCG::uploadImage(std::string& uid, std::string base64, std::string& im
     boost::uuids::uuid uuid = generator();
     std::cout << "Generated UUID: " << uuid << std::endl;
     std::string uuidStr = boost::uuids::to_string(uuid);
-    if (clientImgServer)
+    if (!clientImgServer)
     {
-        imageUrl = clientImgServer->uploadImg(uuidStr, uid, base64);
+        for(auto tmp : serviceNodes_)
+        {
+           auto uri =  "http://" + tmp.getUri();
+            //   std::cout << "imageserver uri: "<< uri << std::endl;
+            if (!clientImgServer)
+            {
+                std::cout << "startserver create  image uri: "<< uri << std::endl;
+                clientImgServer = std::make_shared<ClientFCG>(uri);
+                break;
+            }
+        }
     }
+    if (!clientImgServer)
+    {
+        std::cout << "uploadImag(): clientImgServer is Null" << std::endl;
+        return false;
+    }
+    std::string errorResult;
+    imageUrl = clientImgServer->uploadImg(uuidStr, uid, base64, errorResult);
     std::cout << "imageUrl :  " << imageUrl << std::endl;
     if(imageUrl.empty())
     {
-        std::cerr << "uploadImg failed, try..." << std::endl;
-        // dataQueue.push(data);
+        std::cerr << "uploadImg failed, " << errorResult << " at uri: " << clientImgServer->uri_ << std::endl;
+        for(auto tmp : serviceNodes_)
+        {
+           auto uri =  "http://" + tmp.getUri();
+            if (clientImgServer && clientImgServer->uri_ != uri)
+            {
+                // std::cout << "startserver new create  image uri: "<< uri << std::endl;
+                clientImgServer.reset();
+                clientImgServer = std::make_shared<ClientFCG>(uri);
+                break;
+            }
+        }
         return false;
     }
     return true;

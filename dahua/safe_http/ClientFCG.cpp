@@ -85,7 +85,7 @@ void ClientFCG::updateNodeInfo(std::vector<ServiceNode>& serviceNodes)
                            << response.serialize() << std::endl;
                  if (customInfo != nullptr)
                  {
-                     std::vector<ServiceNode>* serviceNodes =
+                     std::vector<ServiceNode>* serviceNodesInfo =
                          static_cast<std::vector<ServiceNode>*>(customInfo);
 
                      if (!response.has_field("data")) return;
@@ -94,7 +94,7 @@ void ClientFCG::updateNodeInfo(std::vector<ServiceNode>& serviceNodes)
                      {
                          for (auto node : service["serviceNodes"].as_array())
                          {
-                             serviceNodes->emplace_back(
+                             serviceNodesInfo->emplace_back(
                                  node["host"].as_string(),
                                  node["port"].as_string(),
                                  service["serviceName"].as_string());
@@ -150,7 +150,7 @@ void ClientFCG::getConfigFile()
                              std::chrono::milliseconds(timerInterval * 1000));
 }
 
-std::string ClientFCG::uploadImg(std::string& uuid, std::string& uid, std::string& base64)
+std::string ClientFCG::uploadImg(std::string& uuid, std::string& uid, std::string& base64, std::string& errorReuslt)
 {
     std::cout << "uploadImg Task executed" << std::endl;
     json::value bodyInfo;
@@ -170,13 +170,18 @@ std::string ClientFCG::uploadImg(std::string& uuid, std::string& uid, std::strin
     bodyInfo["fileType"] = json::value::string("alarm");
     
     std::string imageUrl;
-    post(SAVE_IMG_URI, bodyInfo, nullptr,
-            [&](json::value response, void* customInfo) {
-                std::cout << "[SAVE_IMG_URI] Response: "
-                        << response.serialize() << std::endl;
-                if (!response.has_field("data")) return;
-                imageUrl = response["data"]["imageUrl"].as_string();
-            });
+
+    post(
+        SAVE_IMG_URI, bodyInfo, nullptr,
+        [&](json::value response, void* customInfo) {
+            std::cout << "[SAVE_IMG_URI] Response: " << response.serialize()
+                        << std::endl;
+            if (!response.has_field("data")) return;
+            imageUrl = response["data"]["imageUrl"].as_string();
+        },
+        [&](const std::string& errorStr) { errorReuslt = errorStr; });
+
+
 
     // {
     //     "code" : "0", "message" : "success", "data": { "imageUrl" : "xxxxxxx" }

@@ -14,7 +14,7 @@ struct ServiceNode
     ServiceNode(std::string host, std::string port, std::string serviceName)
         : host_(host), port_(port), serviceName_(serviceName) {};
 
-    std::string getUri() { return (host_ + port_); }
+    std::string getUri() { return (host_ +":" + port_); }
 };
 
 struct CustomInfo
