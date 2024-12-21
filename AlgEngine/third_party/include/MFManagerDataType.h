@@ -10,19 +10,19 @@
 #include "unistd.h"
 #include "boost/filesystem.hpp"
 
-#include "MxBase/DeviceManager/DeviceManager.h"
-#include "MxBase/DvppWrapper/DvppWrapper.h"
-#include "MxBase/MemoryHelper/MemoryHelper.h"
-#include "MxBase/E2eInfer/ImageProcessor/ImageProcessor.h"
-#include "MxBase/E2eInfer/VideoDecoder/VideoDecoder.h"
-#include "MxBase/E2eInfer/VideoEncoder/VideoEncoder.h"
-#include "MxBase/E2eInfer/DataType.h"
-#include "MxBase/MxBase.h"
-#include "MxBase/Log/Log.h"
+// #include "MxBase/DeviceManager/DeviceManager.h"
+// #include "MxBase/DvppWrapper/DvppWrapper.h"
+// #include "MxBase/MemoryHelper/MemoryHelper.h"
+// #include "MxBase/E2eInfer/ImageProcessor/ImageProcessor.h"
+// #include "MxBase/E2eInfer/VideoDecoder/VideoDecoder.h"
+// #include "MxBase/E2eInfer/VideoEncoder/VideoEncoder.h"
+// #include "MxBase/E2eInfer/DataType.h"
+// #include "MxBase/MxBase.h"
+// #include "MxBase/Log/Log.h"
 
 extern "C"
 {
-#include <libavformat/avformat.h>
+// #include <libavformat/avformat.h>
 }
 
 // Namespace for all common definitions
@@ -124,13 +124,13 @@ namespace MFNameSpace
     // Alias for filesystem
     namespace fs = boost::filesystem;
 
-    // FrameImage structure definition
-    struct FrameImage
-    {
-        MxBase::Image image; // video Image Class
-        uint32_t frameId = 0;
-        uint32_t channelId = 0;
-    };
+    // // FrameImage structure definition
+    // struct FrameImage
+    // {
+    //     MxBase::Image image; // video Image Class
+    //     uint32_t frameId = 0;
+    //     uint32_t channelId = 0;
+    // };
 
     struct FrameInfo
     {

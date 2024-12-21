@@ -20,6 +20,10 @@ link_directories(
     ${MX_SDK_HOME}/lib/modelpostprocessors
 )
 
+link_libraries(
+  /usr/local/Ascend/ascend-toolkit/latest/lib64
+)
+
 add_subdirectory(plugins)
 
 add_executable(yoloInfer main.cpp)

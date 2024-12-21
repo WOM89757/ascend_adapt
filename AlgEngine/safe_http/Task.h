@@ -7,6 +7,9 @@
 #include <vector>
 #include <queue>
 
+#include "FFmpegCodecImpl.h"
+// #include "MFManagerDataType.h"
+
 class Task : public ThreadBase
 {
 public:
@@ -49,6 +52,8 @@ public:
     std::string code_;
     std::string message_;
     AlarmFCG alarmFCG;
+    // std::shared_ptr<ModuleManager> moduleManager;
+   ModuleManager* moduleManager;
 
 private:
     void run() override;

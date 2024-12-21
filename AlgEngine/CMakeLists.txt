@@ -20,14 +20,25 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # 添加 cpprestsdk 库
 find_library(cpprestsdk REQUIRED NAMES cpprestsdk cpprest)
+# find_library(opencv4 REQUIRED)
+
+include_directories(
+     "${CMAKE_CURRENT_LIST_DIR}/third_party//include"
+)
+# include(${CMAKE_SOURCE_DIR}/third_party/CMakeLists.txt)
 
 add_subdirectory(safe_http)
+# add_subdirectory(serverEngine)
 
 add_executable(${PROJECT_NAME} main.cpp)
+
+link_directories(/usr/local/Ascend/mxVision/opensource/lib/)
+
 target_link_libraries( ${PROJECT_NAME}
     # PRIVATE cpprestsdk::cpprest
     PRIVATE cpprest
-    PRIVATE pthread ssl crypto
+    PRIVATE pthread  crypto
+    # ssl
     PRIVATE cube-common-safe-http-object
     PRIVATE boost_system
     amqpcpp

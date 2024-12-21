@@ -4,6 +4,10 @@ bool Task::start()
 {
     //TODO init decode
     //TODO init alg infer
+    AlgInitParams algInitParam;
+    MFStatus status;
+    // moduleManager = InitCodec(algInitParam, &status);
+
 
     // start infer thread
     startThr();
@@ -15,6 +19,7 @@ bool Task::start()
 bool Task::stop()
 {
     // stop infer thread
+    // MFStatus status = ReleaseCodec(moduleManager);
     stopThr();
     alarmFCG.stop();
     return true;
@@ -27,6 +32,7 @@ void Task::run()
         std::cout << "Running in thread: " << std::this_thread::get_id() << " taskId: " << taskId_  << " url: " << url_ << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
         //TODO infer image, get alter result
+        
         //TODO push alter to queue
         std::string label = "test";
         // alarmQueue.push(AlarmInfo(0.5, label));
