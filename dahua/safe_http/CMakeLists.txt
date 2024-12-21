@@ -16,12 +16,10 @@ cmake_minimum_required(VERSION 3.10)
 
 file(GLOB_RECURSE SOURCES *.cpp *.cc *.c)
 
-
-# find_package(CPPRESTSDK)
-find_library(cpprestsdk REQUIRED NAMES cpprestsdk cpprest)
-
-# if (NOT CPPRESTSDK_FOUND) 
-if (NOT cpprestsdk-lib) 
+# find_library(cpprestsdk REQUIRED NAMES cpprestsdk cpprest)
+# if (NOT cpprestsdk-lib) 
+find_package(CPPRESTSDK)
+if (NOT CPPRESTSDK_FOUND) 
     message(STATUS, "not build safe http")
     return()
 endif()

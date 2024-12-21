@@ -4,6 +4,7 @@
 #include "ClientFCG.h"
 #include "ThreadSafeQueue.h"
 #include "ThreadBase.h"
+#include "AmqpClient.h"
 
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
@@ -27,6 +28,7 @@ private:
     std::vector<ServiceNode> serviceNodes_;
     std::shared_ptr<ClientFCG> clientVias;
     std::shared_ptr<ClientFCG> clientImgServer;
+    std::shared_ptr<AmqpClient> clientMq;
     std::string viasAddr_;
 };
 

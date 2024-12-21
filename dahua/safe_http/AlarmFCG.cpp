@@ -5,6 +5,19 @@ void AlarmFCG::start(std::string& viasAddr)
     viasAddr_ = viasAddr;
     clientVias = std::make_shared<ClientFCG>("http://" + viasAddr_);
     clientVias->updateNodeInfo(serviceNodes_);
+
+    std::string mQHost = std::getenv("MQhost");
+    uint16_t mQport = 5672;
+    try {
+        mQport = std::stoi(std::getenv("MQport"));
+    } catch (const std::invalid_argument &e) {
+        std::cout << std::string("Invalid integer value for environment variable '") + std::to_string(mQport) + "': " + std::getenv("MQport") << std::endl;
+    }
+    std::string mQuerName = std::getenv("MQuserName");
+    std::string mQpassword = std::getenv("MQpassword");
+
+    clientMq = std::make_shared<AmqpClient>(mQHost, mQport, "/", mQuerName, mQpassword);
+
     startThr();
 }
 
@@ -42,6 +55,13 @@ void AlarmFCG::run()
         }
 
         // rabbitmq.send(reportInfo);
+
+        std::string exchangeName = "tripartite_event";
+        std::string routingKey = "event.tripartite.behaviorAlarm.[" + data.uid + "].[" + std::string(std::getenv("vendor")) + "]";
+        std::string queueName = routingKey + "-queue";
+        clientMq->declareComponents(exchangeName, queueName, routingKey, AMQP::ExchangeType::topic);
+        clientMq->subscribe(queueName);
+        clientMq->publish(exchangeName, routingKey, "Alarm...!");
 
             // {
 //     "uid": "8",

@@ -96,4 +96,4 @@ fi
 exit 0
 
 
-# bash run.sh  -m ./model/yolov5m_bs1.om  -c model/yolov.cfg  -l ./model/coco.names  -i zidane.jpg
+# bash run.sh  -m ./model/yolov5m_bs1.om  -c model/yolov.cfg  -l ./model/coco.names  -i zidane.jpg  -t yolov5

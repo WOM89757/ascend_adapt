@@ -39,7 +39,7 @@ struct AlarmInfo
 
 struct ObjectRect
 {
-    // 报警目标在全景图中的相对位置(8192坐标):左
+    // 报警目标在全景图中的相对位置:
     int objLeft;
     int objTop;
     int objRight;
@@ -90,6 +90,7 @@ struct ReportInfo
     std::string paasId;
     // 报警时间, utc 0时区的时间,单位为毫秒
     double alarmTime;
+
     // 报警类型,见 附录16
     std::string alarmType;
     // 报警动作,start-开始,stop结束,pluse-脉冲,固定填写 pluse 即可

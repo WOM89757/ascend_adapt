@@ -67,7 +67,7 @@ void ServerDH::handleNodeInfo(http_request request, void* customInfo)
                 response["data"][i]["serviceNodes"][0]["host"] =
                     json::value::string("0.0.0.0");
                 response["data"][i]["serviceNodes"][0]["port"] =
-                    json::value::string("8081");
+                    json::value::string("18081");
             }
             request.reply(status_codes::OK, response);
         })

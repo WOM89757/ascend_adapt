@@ -19,10 +19,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # 添加 cpprestsdk 库
-# find_package(cpprestsdk REQUIRED)
-# find_library(cpprestsdk-lib cpprest)
 find_library(cpprestsdk REQUIRED NAMES cpprestsdk cpprest)
-message(STATUS "cpprestsdk-lib = ${cpprestsdk-lib}")
 
 add_subdirectory(safe_http)
 
@@ -33,18 +30,6 @@ target_link_libraries( ${PROJECT_NAME}
     PRIVATE pthread ssl crypto
     PRIVATE cube-common-safe-http-object
     PRIVATE boost_system
+    amqpcpp
+    ev
 )
-
-
-# # 可执行文件
-# add_executable(CppRestWrapper main.cpp)
-
-# # 链接 cpprestsdk
-# target_link_libraries(CppRestWrapper PRIVATE cpprestsdk::cpprest)
-
-# # 链接其他系统库（如需要）
-# if(UNIX)
-#     target_link_libraries(CppRestWrapper PRIVATE pthread ssl crypto)
-# endif()
-
-
