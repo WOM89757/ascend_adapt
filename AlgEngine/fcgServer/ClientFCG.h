@@ -1,8 +1,8 @@
 #ifndef __CLIENTFCG_H__
 #define __CLIENTFCG_H__
 
-#include "ClientWrapper.h"
-#include "Timer.h"
+#include <ClientWrapper.h>
+#include <Timer.h>
 #include "commonDataType.h"
 
 class ClientFCG : public ClientWrapper

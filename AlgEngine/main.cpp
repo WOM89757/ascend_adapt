@@ -2,9 +2,8 @@
 #include <thread>
 #include <csignal>
 
-#include "safe_http/ServerFCG.h"
-#include "safe_http/ServerDH.h"
-#include "safe_http/AmqpClient.h"
+#include "fcgServer/ServerFCG.h"
+#include "fcgServer/ServerDH.h"
 
 std::atomic<bool> keep_running(true);
 

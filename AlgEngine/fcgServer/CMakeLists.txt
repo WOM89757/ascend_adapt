@@ -16,23 +16,15 @@ cmake_minimum_required(VERSION 3.10)
 
 file(GLOB_RECURSE SOURCES *.cpp *.cc *.c)
 
-# find_library(cpprestsdk REQUIRED NAMES cpprestsdk cpprest)
-# if (NOT cpprestsdk-lib) 
-find_package(CPPRESTSDK)
-if (NOT CPPRESTSDK_FOUND) 
-    message(STATUS, "not build safe http")
-    return()
-endif()
-
 set(INCLUDE ${CMAKE_CURRENT_LIST_DIR})
 
 include_directories(${CMAKE_CURRENT_LIST_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${INCLUDE})
 
-set(LIBRARY cube-common-safe-http-object)
-add_library(${LIBRARY} STATIC ${SOURCES})
+set(LIBRARY cube-fcg-server-object)
+add_library(${LIBRARY} SHARED ${SOURCES})
 set_property(TARGET ${LIBRARY} PROPERTY POSITION_INDEPENDENT_CODE ON)
 
-set(CUBE_COMMON_SAFE_HTTP_LIBRARY ${LIBRARY} CACHE INTERNAL "")
-set(CUBE_COMMON_SAFE_HTTP_INCLUDE ${INCLUDE} CACHE INTERNAL "")
+set(CUBE_FCG_SERVER_LIBRARY ${LIBRARY} CACHE INTERNAL "")
+set(CUBE_FCG_SERVER_INCLUDE ${INCLUDE} CACHE INTERNAL "")

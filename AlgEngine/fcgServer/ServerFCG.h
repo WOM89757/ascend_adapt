@@ -1,7 +1,7 @@
 #ifndef __SERVERFCG_H__
 #define __SERVERFCG_H__
 
-#include "ServerWrapper.h"
+#include <ServerWrapper.h>
 #include "ClientFCG.h"
 #include "commonDataType.h"
 #include "Task.h"
